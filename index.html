@@ -20,6 +20,12 @@
     <input id="nbChoix" min="1" type="number">
     <p class="error-message" id="errorNbChoix"></p>
 
+    <label for="displayMode">Comment afficher les choix ?</label>
+    <select id="displayMode">
+        <option value="literal">Littéral (A, B, C...)</option>
+        <option value="numeric">Numérique (1, 2, 3...)</option>
+    </select>
+
     <br>
     <button id="startBtn" onclick="startQCM()">Valider</button>
 </div>
@@ -27,17 +33,13 @@
 <div class="hidden" id="qcm">
     <h2 id="questionTitle"></h2>
 
-    <label for="bonnes">Nombre de bonnes réponses de la question :</label>
-    <input id="bonnes" min="1" type="number">
-    <p class="error-message" id="errorBonnes"></p>
+    <p>Réponses cochées par l'utilisateur :</p>
+    <div class="choices-grid" id="userAnswers"></div>
 
-    <label for="correctes">Nombre de réponses correctes :</label>
-    <input id="correctes" min="0" type="number">
-    <p class="error-message" id="errorCorrectes"></p>
+    <p>Correction (bonnes réponses) :</p>
+    <div class="choices-grid" id="officialAnswers"></div>
 
-    <label for="fausses">Nombre de réponses fausses :</label>
-    <input id="fausses" min="0" type="number">
-    <p class="error-message" id="errorFausses"></p>
+    <p class="error-message" id="errorOfficialAnswers"></p>
     <p class="error-message" id="errorQuestion"></p>
 
     <br>

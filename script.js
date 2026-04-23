@@ -2,13 +2,11 @@ let nbChoix = 0;
 let totalQuestions = 0;
 let currentQuestion = 1;
 let totalPoints = 0;
+let displayMode = "literal";
 
 const champsTouches = {
     nbQuestions: false,
-    nbChoix: false,
-    bonnes: false,
-    correctes: false,
-    fausses: false
+    nbChoix: false
 };
 
 function marquerChampCommeTouche(id) {
@@ -54,50 +52,33 @@ function validerSetup(afficherMessages = true) {
     return estValide;
 }
 
+function getSelectedValues(containerId) {
+    const container = document.getElementById(containerId);
+    const checkboxes = container.querySelectorAll("input[type='checkbox']:checked");
+    return Array.from(checkboxes).map((checkbox) => parseInt(checkbox.value, 10));
+}
+
 function validerChampsQuestion(afficherMessages = true) {
-    const bonnes = lireNombre("bonnes");
-    const correctes = lireNombre("correctes");
-    const fausses = lireNombre("fausses");
+    const selectedUser = getSelectedValues("userAnswers");
+    const selectedOfficial = getSelectedValues("officialAnswers");
 
     let estValide = true;
-    let erreurBonnes = "";
-    let erreurCorrectes = "";
-    let erreurFausses = "";
+    let erreurOfficialAnswers = "";
     let erreurQuestion = "";
 
-    if (isNaN(bonnes) || bonnes <= 0) {
-        erreurBonnes = "Nombre de bonnes réponses invalide.";
-        estValide = false;
-    } else if (bonnes > nbChoix) {
-        erreurBonnes = "Le nombre de bonnes réponses ne peut pas dépasser " + nbChoix + ".";
+    if (selectedOfficial.length === 0) {
+        erreurOfficialAnswers = "Cochez au moins une bonne réponse dans la correction.";
         estValide = false;
     }
 
-    if (isNaN(correctes) || correctes < 0) {
-        erreurCorrectes = "Nombre de réponses correctes invalide.";
-        estValide = false;
-    }
-
-    if (isNaN(fausses) || fausses < 0) {
-        erreurFausses = "Nombre de réponses fausses invalide.";
-        estValide = false;
-    }
-
-    if (!isNaN(bonnes) && !isNaN(correctes) && correctes > bonnes) {
-        erreurQuestion = "Les réponses correctes ne peuvent pas dépasser les bonnes réponses.";
-        estValide = false;
-    } else if (!isNaN(correctes) && !isNaN(fausses) && (correctes + fausses) > nbChoix) {
-        erreurQuestion = "Le total correctes + fausses ne peut pas dépasser " + nbChoix + ".";
+    if (selectedUser.length > nbChoix || selectedOfficial.length > nbChoix) {
+        erreurQuestion = "Le nombre de choix cochés est invalide.";
         estValide = false;
     }
 
     if (afficherMessages) {
-        afficherErreur("errorBonnes", champsTouches.bonnes ? erreurBonnes : "");
-        afficherErreur("errorCorrectes", champsTouches.correctes ? erreurCorrectes : "");
-        afficherErreur("errorFausses", champsTouches.fausses ? erreurFausses : "");
-
-        const afficherErreurGlobale = champsTouches.bonnes || champsTouches.correctes || champsTouches.fausses;
-        afficherErreur("errorQuestion", afficherErreurGlobale ? erreurQuestion : "");
+        afficherErreur("errorOfficialAnswers", erreurOfficialAnswers);
+        afficherErreur("errorQuestion", erreurQuestion);
     }
 
     return estValide;
@@ -111,6 +92,83 @@ function mettreAJourEtatQuestion() {
     document.getElementById("validerBtn").disabled = !validerChampsQuestion(false);
 }
 
+function toAlphabetLabel(index) {
+    let value = index;
+    let label = "";
+
+    while (value > 0) {
+        const remainder = (value - 1) % 26;
+        label = String.fromCharCode(65 + remainder) + label;
+        value = Math.floor((value - 1) / 26);
+    }
+
+    return label;
+}
+
+function getChoiceLabel(index) {
+    if (displayMode === "numeric") {
+        return String(index);
+    }
+
+    return toAlphabetLabel(index);
+}
+
+function creerOptionCheckbox(name, value, text) {
+    const item = document.createElement("label");
+    item.className = "choice-item";
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.name = name;
+    checkbox.value = String(value);
+
+    const span = document.createElement("span");
+    span.innerText = text;
+
+    item.appendChild(checkbox);
+    item.appendChild(span);
+
+    return item;
+}
+
+function renderChoiceCheckboxes() {
+    const userContainer = document.getElementById("userAnswers");
+    const officialContainer = document.getElementById("officialAnswers");
+
+    userContainer.innerHTML = "";
+    officialContainer.innerHTML = "";
+
+    for (let i = 1; i <= nbChoix; i++) {
+        const label = getChoiceLabel(i);
+
+        userContainer.appendChild(creerOptionCheckbox("userAnswer", i, label));
+        officialContainer.appendChild(creerOptionCheckbox("officialAnswer", i, label));
+    }
+
+    const onQuestionInput = () => {
+        mettreAJourEtatQuestion();
+        validerChampsQuestion(true);
+    };
+
+    userContainer.querySelectorAll("input[type='checkbox']").forEach((checkbox) => {
+        checkbox.addEventListener("change", onQuestionInput);
+    });
+
+    officialContainer.querySelectorAll("input[type='checkbox']").forEach((checkbox) => {
+        checkbox.addEventListener("change", onQuestionInput);
+    });
+}
+
+function setQuestionInputsDisabled(disabled) {
+    ["userAnswers", "officialAnswers"].forEach((containerId) => {
+        document.getElementById(containerId)
+            .querySelectorAll("input[type='checkbox']")
+            .forEach((checkbox) => {
+                checkbox.disabled = disabled;
+            });
+    });
+}
+
 function initialiserValidationTempsReel() {
     ["nbQuestions", "nbChoix"].forEach((id) => {
         document.getElementById(id).addEventListener("input", () => {
@@ -120,12 +178,8 @@ function initialiserValidationTempsReel() {
         });
     });
 
-    ["bonnes", "correctes", "fausses"].forEach((id) => {
-        document.getElementById(id).addEventListener("input", () => {
-            marquerChampCommeTouche(id);
-            mettreAJourEtatQuestion();
-            validerChampsQuestion(true);
-        });
+    document.getElementById("displayMode").addEventListener("change", () => {
+        mettreAJourEtatSetup();
     });
 
     mettreAJourEtatSetup();
@@ -138,6 +192,7 @@ function startQCM() {
 
     totalQuestions = lireNombre("nbQuestions");
     nbChoix = lireNombre("nbChoix");
+    displayMode = document.getElementById("displayMode").value;
 
     document.getElementById("setup").classList.add("hidden");
     document.getElementById("qcm").classList.remove("hidden");
@@ -147,18 +202,11 @@ function startQCM() {
 
 function afficherQuestion() {
     document.getElementById("questionTitle").innerText = "Question " + currentQuestion + " :";
-    document.getElementById("bonnes").value = "";
-    document.getElementById("correctes").value = "";
-    document.getElementById("fausses").value = "";
     document.getElementById("resultQuestion").innerText = "";
 
-    champsTouches.bonnes = false;
-    champsTouches.correctes = false;
-    champsTouches.fausses = false;
+    renderChoiceCheckboxes();
 
-    afficherErreur("errorBonnes", "");
-    afficherErreur("errorCorrectes", "");
-    afficherErreur("errorFausses", "");
+    afficherErreur("errorOfficialAnswers", "");
     afficherErreur("errorQuestion", "");
 
     document.getElementById("validerBtn").disabled = true;
@@ -170,9 +218,22 @@ function validerQuestion() {
         return;
     }
 
-    const bonnes = lireNombre("bonnes");
-    const correctes = lireNombre("correctes");
-    const fausses = lireNombre("fausses");
+    const selectedUser = getSelectedValues("userAnswers");
+    const selectedOfficial = getSelectedValues("officialAnswers");
+
+    const bonnes = selectedOfficial.length;
+    const officialSet = new Set(selectedOfficial);
+
+    let correctes = 0;
+    let fausses = 0;
+
+    selectedUser.forEach((value) => {
+        if (officialSet.has(value)) {
+            correctes++;
+        } else {
+            fausses++;
+        }
+    });
 
     const count_point_response_question = 1 / bonnes;
 
@@ -188,6 +249,7 @@ function validerQuestion() {
     document.getElementById("resultQuestion").innerText =
         "Points obtenus : " + point_response.toFixed(2) + " / 1";
 
+    setQuestionInputsDisabled(true);
     document.getElementById("validerBtn").disabled = true;
     document.getElementById("nextBtn").classList.remove("hidden");
 }
@@ -206,7 +268,7 @@ function afficherResultatFinal() {
     document.getElementById("qcm").classList.add("hidden");
     document.getElementById("resultFinal").classList.remove("hidden");
 
-    let noteSur20 = (totalPoints / totalQuestions) * 20;
+    const noteSur20 = (totalPoints / totalQuestions) * 20;
 
     document.getElementById("noteFinale").innerText =
         "Note finale : " + noteSur20.toFixed(2) + " / 20";
@@ -216,21 +278,25 @@ function resetQCM() {
     totalQuestions = 0;
     currentQuestion = 1;
     totalPoints = 0;
+    nbChoix = 0;
+    displayMode = "literal";
 
     document.getElementById("nbQuestions").value = "";
     document.getElementById("nbChoix").value = "";
+    document.getElementById("displayMode").value = "literal";
 
     document.getElementById("resultFinal").classList.add("hidden");
+    document.getElementById("qcm").classList.add("hidden");
     document.getElementById("setup").classList.remove("hidden");
 
     champsTouches.nbQuestions = false;
     champsTouches.nbChoix = false;
-    champsTouches.bonnes = false;
-    champsTouches.correctes = false;
-    champsTouches.fausses = false;
 
     afficherErreur("errorNbQuestions", "");
     afficherErreur("errorNbChoix", "");
+    afficherErreur("errorOfficialAnswers", "");
+    afficherErreur("errorQuestion", "");
+
     mettreAJourEtatSetup();
 }
 
