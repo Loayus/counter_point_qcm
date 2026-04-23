@@ -197,9 +197,10 @@ button:disabled {
     appearance: none;
 }
 
-.choice-item input[type="checkbox"]:checked {
-    background: var(--primary);
-    border-color: var(--primary);
+.choice-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary);
 }
 
 
