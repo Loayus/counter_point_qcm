@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Compteur de points QCM</title>
+    <link href="style.css" rel="stylesheet">
+</head>
+
+<body>
+
+<h1>Compteur de points QCM</h1>
+
+<div id="setup">
+    <label for="nbQuestions">Combien de questions comporte ce QCM ?</label>
+    <input id="nbQuestions" min="1" type="number">
+    <p class="error-message" id="errorNbQuestions"></p>
+
+    <label for="nbChoix">Combien de choix sont disponibles à chaque question ?</label>
+    <input id="nbChoix" min="1" type="number">
+    <p class="error-message" id="errorNbChoix"></p>
+
+    <br>
+    <button id="startBtn" onclick="startQCM()">Valider</button>
+</div>
+
+<div class="hidden" id="qcm">
+    <h2 id="questionTitle"></h2>
+
+    <label for="bonnes">Nombre de bonnes réponses de la question :</label>
+    <input id="bonnes" min="1" type="number">
+    <p class="error-message" id="errorBonnes"></p>
+
+    <label for="correctes">Nombre de réponses correctes :</label>
+    <input id="correctes" min="0" type="number">
+    <p class="error-message" id="errorCorrectes"></p>
+
+    <label for="fausses">Nombre de réponses fausses :</label>
+    <input id="fausses" min="0" type="number">
+    <p class="error-message" id="errorFausses"></p>
+    <p class="error-message" id="errorQuestion"></p>
+
+    <br>
+    <button id="validerBtn" onclick="validerQuestion()">Valider la question</button>
+
+    <p id="resultQuestion"></p>
+
+    <button class="hidden" id="nextBtn" onclick="nextQuestion()">Question suivante</button>
+</div>
+
+<div class="hidden" id="resultFinal">
+    <h2 id="noteFinale"></h2>
+    <button onclick="resetQCM()">Recommencer un QCM</button>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
