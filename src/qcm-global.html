@@ -3,15 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Compteur de points QCM</title>
-    <link href="style.css" rel="stylesheet">
+    <title>Compteur de points QCM - Correction globale</title>
+    <link href="../css/style.css" rel="stylesheet">
 </head>
 
 <body>
 
+<div class="back-link">
+    <a href="index.html">← Retour à l'accueil</a>
+</div>
+
 <h1>Compteur de points QCM</h1>
 
 <div id="setup">
+    <label for="qcmTitle">Titre du QCM</label>
+    <input id="qcmTitle" placeholder="Ex: Mathématiques - Chapitre 3" type="text">
+    <p class="error-message" id="errorQcmTitle"></p>
+
     <label for="nbQuestions">Combien de questions comporte ce QCM ?</label>
     <input id="nbQuestions" min="1" type="number">
     <p class="error-message" id="errorNbQuestions"></p>
@@ -31,30 +39,27 @@
 </div>
 
 <div class="hidden" id="qcm">
-    <h2 id="questionTitle"></h2>
+    <h2>Répondez à toutes les questions</h2>
+    <p class="muted-helper">Vous verrez la correction après avoir répondu à toutes les questions</p>
 
-    <p>Réponses cochées par l'utilisateur :</p>
-    <div class="choices-grid" id="userAnswers"></div>
+    <div id="questionsContainer"></div>
 
-    <p>Correction (bonnes réponses) :</p>
-    <div class="choices-grid" id="officialAnswers"></div>
-
-    <p class="error-message" id="errorOfficialAnswers"></p>
     <p class="error-message" id="errorQuestion"></p>
 
     <br>
-    <button id="validerBtn" onclick="validerQuestion()">Valider la question</button>
-
-    <p id="resultQuestion"></p>
-
-    <button class="hidden" id="nextBtn" onclick="nextQuestion()">Question suivante</button>
+    <button id="validerBtn" onclick="validerQCM()">Voir les résultats</button>
 </div>
 
 <div class="hidden" id="resultFinal">
+    <h2>Résultats</h2>
+    <div id="correctionContainer"></div>
     <h2 id="noteFinale"></h2>
+    <button onclick="telechargerPDF()">📥 Télécharger le récapitulatif</button>
     <button onclick="resetQCM()">Recommencer un QCM</button>
 </div>
 
-<script src="script.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="../js/script-global.js"></script>
 </body>
 </html>
+

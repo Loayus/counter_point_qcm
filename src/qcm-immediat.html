@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Compteur de points QCM - Correction immédiate</title>
+    <link href="../css/style.css" rel="stylesheet">
+</head>
+
+<body>
+
+<div class="back-link">
+    <a href="index.html">← Retour à l'accueil</a>
+</div>
+
+<h1>Compteur de points QCM</h1>
+
+<div id="setup">
+    <label for="nbQuestions">Combien de questions comporte ce QCM ?</label>
+    <input id="nbQuestions" min="1" type="number">
+    <p class="error-message" id="errorNbQuestions"></p>
+
+    <label for="nbChoix">Combien de choix sont disponibles à chaque question ?</label>
+    <input id="nbChoix" min="1" type="number">
+    <p class="error-message" id="errorNbChoix"></p>
+
+    <label for="displayMode">Comment afficher les choix ?</label>
+    <select id="displayMode">
+        <option value="literal">Littéral (A, B, C...)</option>
+        <option value="numeric">Numérique (1, 2, 3...)</option>
+    </select>
+
+    <br>
+    <button id="startBtn" onclick="startQCM()">Valider</button>
+</div>
+
+<div class="hidden" id="qcm">
+    <h2 id="questionTitle"></h2>
+
+    <p>Réponses cochées par l'utilisateur :</p>
+    <div class="choices-grid" id="userAnswers"></div>
+
+    <p>Correction (bonnes réponses) :</p>
+    <div class="choices-grid" id="officialAnswers"></div>
+
+    <p class="error-message" id="errorOfficialAnswers"></p>
+    <p class="error-message" id="errorQuestion"></p>
+
+    <br>
+    <button id="validerBtn" onclick="validerQuestion()">Valider la question</button>
+
+    <p id="resultQuestion"></p>
+
+    <button class="hidden" id="nextBtn" onclick="nextQuestion()">Question suivante</button>
+</div>
+
+<div class="hidden" id="resultFinal">
+    <h2 id="noteFinale"></h2>
+    <button onclick="resetQCM()">Recommencer un QCM</button>
+</div>
+
+<script src="../js/script-immediat.js"></script>
+</body>
+</html>
+
