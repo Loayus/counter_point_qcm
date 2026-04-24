@@ -48,8 +48,9 @@ h2 {
     padding: 30px clamp(16px, 4vw, 34px);
     border-radius: var(--radius);
     border: 1px solid rgba(210, 210, 215, 0.65);
-    background: color-mix(in srgb, var(--surface) 88%, transparent);
+    background: rgba(255, 255, 255, 0.9);
     box-shadow: var(--shadow);
+    -webkit-backdrop-filter: saturate(140%) blur(8px);
     backdrop-filter: saturate(140%) blur(8px);
 }
 
@@ -92,6 +93,13 @@ select {
     font-size: 1rem;
     outline: none;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%231d1d1f%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px top 50%;
+    background-size: 12px auto;
 }
 
 select:focus {
@@ -188,23 +196,33 @@ button:disabled {
     cursor: pointer;
     flex-shrink: 0;
     accent-color: var(--primary);
-    appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
+    appearance: none;
     border: 2px solid var(--border);
     border-radius: 4px;
     background-color: #ffffff;
     transition: all 0.2s ease;
     position: relative;
+    display: inline-block;
+    vertical-align: middle;
 }
 
 .choice-item input[type="checkbox"]:checked {
     background-color: var(--primary);
     border-color: var(--primary);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='white' d='M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 11.94l6.72-6.72a.75.75 0 011.06 0z'/%3E%3C/svg%3E");
-    background-size: 100% 100%;
-    background-position: center;
-    background-repeat: no-repeat;
+}
+
+.choice-item input[type="checkbox"]:checked::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 45%;
+    width: 4px;
+    height: 8px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: translate(-50%, -50%) rotate(45deg);
 }
 
 .choice-item input[type="checkbox"]:hover {
